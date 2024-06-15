@@ -1,1 +1,1 @@
-# bitirme_gui_28_05
+Dashboard and Control Unit for Smart Rental Quad Bike
