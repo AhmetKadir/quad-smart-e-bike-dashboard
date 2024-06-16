@@ -348,10 +348,7 @@ border: 1px solid #A0A0A0;
     </property>
     <property name="icon">
      <iconset>
-      <normaloff>Icons/light.png</normaloff>
-      <activeon>Icons/wifi.png</activeon>
-      <selectedoff>Icons/lock.png</selectedoff>
-      <selectedon>Icons/lock.png</selectedon>Icons/light.png</iconset>
+      <normaloff>Icons/lightOff.png</normaloff>Icons/lightOff.png</iconset>
     </property>
     <property name="iconSize">
      <size>
@@ -887,6 +884,23 @@ border: 1px solid #A0A0A0;</string>
      </size>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>460</y>
+      <width>351</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PushButton</string>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>../Icons/horn.png</normaloff>../Icons/horn.png</iconset>
+    </property>
+   </widget>
    <zorder>speed_label</zorder>
    <zorder>lightsOnButton</zorder>
    <zorder>battery_bar</zorder>
@@ -914,6 +928,7 @@ border: 1px solid #A0A0A0;</string>
    <zorder>battery_icon</zorder>
    <zorder>rightArrow</zorder>
    <zorder>leftArrow</zorder>
+   <zorder>pushButton</zorder>
   </widget>
  </widget>
  <resources/>

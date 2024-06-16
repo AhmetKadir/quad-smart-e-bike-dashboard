@@ -136,7 +136,7 @@ class GpsModule:
                 self.bike.longitude = float(self.bike.longitude) - 0.001
                 if self.bike.speed < 30:
                     self.bike.speed = float(self.bike.speed) + 0.2
-                
+                print("bike speed: ", self.bike.speed)
                 # self.speed = str(float(self.speed) + 0.2)
                 print(f"Latitude: {self.bike.latitude}, Longitude: {self.bike.longitude}, Speed: {self.bike.speed}")           
                 time.sleep(4)       

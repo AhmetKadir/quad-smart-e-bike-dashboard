@@ -17,14 +17,16 @@ def run_gps_module(gps_instance: GpsModule):
     
 def send_data_to_server(bike: Bike):
     while True:
-        time.sleep(3)
-        Communication.send_data_to_server(bike.latitude, bike.longitude)
+        time.sleep(2)
+        if not bike.isLocked:
+            Communication.send_data_to_server(bike.latitude, bike.longitude)
+            bike.lightOn = Communication.GET_FLASH_LIGHT()
+        
         bike.isLocked = Communication.read_is_locked()
-        bike.lightOn = Communication.GET_FLASH_LIGHT()
         bike.hasInternetConnection = Communication.check_internet()
         
 def demo1(bike : Bike):
-    print("Demo 1")
+    print("Demo 1 Running")
     bike.speed = 20
     bike.latitude = 40.808448
     bike.longitude = 29.356192

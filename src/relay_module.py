@@ -7,5 +7,8 @@ class RelayModule:
 
     def bike_light_off():
         print("Bike light off")
+        
+    def honk():
+        print("Honk")
 
 

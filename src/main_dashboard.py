@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtCore import QTimer, QTime, QDateTime, QTimeZone, QByteArray
+from PyQt5 import QtGui, QtCore
 
 import time
 import os
@@ -8,7 +9,7 @@ import os
 from src.bike import Bike
 from src.dashboard import Ui_MainWindow
 
-from src.relay_module import RelayModule
+from src.relay_module_rasp import RelayModule
 
 folderPath = os.path.dirname(os.path.abspath(__file__))
 parentDir = os.path.dirname(folderPath)
@@ -31,7 +32,7 @@ class dashboard(QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        #self.showFullScreen()
+        self.showFullScreen()
         fontId = QFontDatabase.addApplicationFont(fullSpeedFontPath)
         if fontId < 0:
             print('font not loaded')
@@ -94,16 +95,21 @@ class dashboard(QMainWindow):
         self.ui.time.setStyleSheet(
             f"font-family: '{families2[0]}'; font-size: 30px; color: white;")
         self.updateDate()
+        
+        # timers array
+        self.timers = []
 
         # update date and time every second
-        timer = QTimer(self)
-        timer.timeout.connect(self.updateDate)
-        timer.start(1000)
+        timer1 = QTimer(self)
+        timer1.timeout.connect(self.updateDate)
+        timer1.start(1000)
+        self.timers.append(timer1)
 
         # update speed every second
-        timer = QTimer(self)
-        timer.timeout.connect(lambda: self.change_speed(bike))
-        timer.start(1000)
+        timer2 = QTimer(self)
+        timer2.timeout.connect(lambda: self.change_speed(bike))
+        timer2.start(1000)
+        self.timers.append(timer2)
 
         # update ride time every second
         timer = QTimer(self)
@@ -148,6 +154,11 @@ class dashboard(QMainWindow):
         timer = QTimer(self)
         timer.timeout.connect(lambda: self.checkIsLocked(bike))
         timer.start(1000)
+        
+        self.ui.pushButton.clicked.connect(lambda: self.honk())
+
+    def honk(self):
+        RelayModule.honk()
 
     def change_speed(self, bike: Bike):
         self.ui.speed_label.setText(bike.getFormattedSpeed())
@@ -226,25 +237,51 @@ class dashboard(QMainWindow):
     def toggleLights(self, bike: Bike):
         if bike.lightOn == False:
             bike.lightOn = True
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap("Icons/light.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.ui.lightsOnButton.setIcon(icon)
+            self.ui.lightsOnButton.setIconSize(QtCore.QSize(100, 80))
         else:
             bike.lightOn = False
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap("Icons/lightOff.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.ui.lightsOnButton.setIcon(icon)
+            self.ui.lightsOnButton.setIconSize(QtCore.QSize(100, 80))
+
 
     def checkLights(self, bike: Bike):
         if bike.lightOn:
             RelayModule.bike_light_on()
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap("Icons/light.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.ui.lightsOnButton.setIcon(icon)
+            self.ui.lightsOnButton.setIconSize(QtCore.QSize(100, 80))
 
         else:
             RelayModule.bike_light_off()
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap("Icons/lightOff.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.ui.lightsOnButton.setIcon(icon)
+            self.ui.lightsOnButton.setIconSize(QtCore.QSize(100, 80))
 
     def checkIsLocked(self, bike: Bike):
         if bike.isLocked:
-            print("locked")
             self.ui.unlocked_light.setStyleSheet(statusOffStyleSheet)
             # disable central widget
-            self.setEnabled(False)
             self.ui.centralwidget.setEnabled(False)
+            bike.resetBike()
+            self.change_speed(bike)
+            self.stopTimers()
         else:
-            print("unlocked")
             self.ui.centralwidget.setEnabled(True)
             self.ui.unlocked_light.setStyleSheet(statusOnStyleSheet)
+            self.startTimers()
             
+    
+    def stopTimers(self):
+        for timer in self.timers:
+            timer.stop()        
+
+    def startTimers(self):
+        for timer in self.timers:
+            timer.start()

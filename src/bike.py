@@ -27,3 +27,12 @@ class Bike:
     
     def getFormattedAvgSpeed(self):
         return str(floor(self.avg_speed))
+    
+    def resetBike(self):
+        self.speed = 0
+        self.tripKm = 0
+        self.avg_speed = 0
+        self.rideStartTime = time.time()
+        self.rightSignal = False
+        self.leftSignal = False
+        self.lightOn = False
